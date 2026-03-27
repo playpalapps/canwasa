@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canwasa — Premium Abstract Wallpaper Generator</title>
+    <meta name="description" content="Generate stunning 4K abstract wallpapers instantly on your device. No cloud, no tracking. Available for iOS and Android.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS RESET & ROOT
+           ═══════════════════════════════════════════ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #06060e;
+            --bg-secondary: #0a0a18;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --border-card: rgba(255, 255, 255, 0.06);
+            --border-card-hover: rgba(255, 255, 255, 0.12);
+            --text-primary: #f0f0f5;
+            --text-secondary: rgba(240, 240, 245, 0.65);
+            --text-tertiary: rgba(240, 240, 245, 0.4);
+            --accent-1: #a855f7;
+            --accent-2: #ec4899;
+            --accent-3: #6366f1;
+            --gradient-accent: linear-gradient(135deg, #a855f7, #ec4899, #6366f1);
+            --gradient-accent-soft: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(236, 72, 153, 0.15));
+            --gradient-bg-radial: radial-gradient(ellipse at 50% 0%, rgba(168, 85, 247, 0.08) 0%, transparent 60%);
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --radius: 20px;
+            --radius-sm: 12px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --max-width: 1200px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ═══════════════════════════════════════════
+           SCROLLBAR
+           ═══════════════════════════════════════════ */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.3); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(168, 85, 247, 0.5); }
+
+        /* ═══════════════════════════════════════════
+           ANIMATIONS
+           ═══════════════════════════════════════════ */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-12px) rotate(1deg); }
+            66% { transform: translateY(-6px) rotate(-1deg); }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes orbit {
+            from { transform: rotate(0deg) translateX(180px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(180px) rotate(-360deg); }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ═══════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════ */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0 24px;
+            transition: var(--transition);
+        }
+
+        nav.scrolled {
+            background: rgba(6, 6, 14, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+
+        .nav-logo {
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: -0.02em;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .nav-menu-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* ═══════════════════════════════════════════
+           HERO SECTION
+           ═══════════════════════════════════════════ */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 24px 80px;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, rgba(236, 72, 153, 0.06) 40%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .hero-orb-1 {
+            width: 400px;
+            height: 400px;
+            background: rgba(168, 85, 247, 0.08);
+            top: 10%;
+            left: -5%;
+            animation-delay: 0s;
+        }
+
+        .hero-orb-2 {
+            width: 350px;
+            height: 350px;
+            background: rgba(236, 72, 153, 0.06);
+            top: 20%;
+            right: -8%;
+            animation-delay: -3s;
+        }
+
+        .hero-orb-3 {
+            width: 300px;
+            height: 300px;
+            background: rgba(99, 102, 241, 0.06);
+            bottom: 10%;
+            left: 20%;
+            animation-delay: -5s;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 860px;
+            animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--accent-1);
+            margin-bottom: 32px;
+            letter-spacing: 0.02em;
+        }
+
+        .hero-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-1);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 span {
+            background: var(--gradient-accent);
+            background-size: 200% 200%;
+            animation: gradientShift 6s ease infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 48px;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            border-radius: 14px;
+            font-family: var(--font);
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--gradient-accent);
+            background-size: 200% 200%;
+            color: #fff;
+            box-shadow: 0 4px 24px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(168, 85, 247, 0.4);
+            animation: gradientShift 3s ease infinite;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Hero visual — abstract wallpaper showcase */
+        .hero-visual {
+            position: relative;
+            margin-top: 64px;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            perspective: 800px;
+        }
+
+        .hero-mockup {
+            width: 160px;
+            height: 320px;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .hero-mockup:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .hero-mockup:nth-child(1) { transform: rotate(-6deg) translateY(20px); }
+        .hero-mockup:nth-child(2) { transform: scale(1.08); z-index: 2; }
+        .hero-mockup:nth-child(3) { transform: rotate(6deg) translateY(20px); }
+
+        .hero-mockup:nth-child(1):hover { transform: rotate(-3deg) translateY(12px) scale(1.02); }
+        .hero-mockup:nth-child(2):hover { transform: scale(1.12); }
+        .hero-mockup:nth-child(3):hover { transform: rotate(3deg) translateY(12px) scale(1.02); }
+
+        .mock-wallpaper {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Abstract wallpaper CSS art */
+        .wp-geometric {
+            background:
+                linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .wp-geometric::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background:
+                repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 80px),
+                repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 80px);
+            animation: float 12s ease-in-out infinite;
+        }
+        .wp-geometric::after {
+            content: '';
+            position: absolute;
+            top: 30%;
+            left: 20%;
+            width: 60%;
+            height: 40%;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.1), transparent);
+            border-radius: 50%;
+        }
+
+        .wp-aurora {
+            background: linear-gradient(180deg, #0c0c1d 0%, #1a0a2e 30%, #2d1b69 60%, #ec4899 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .wp-aurora::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: -30%;
+            width: 160%;
+            height: 60%;
+            background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.4), rgba(99, 102, 241, 0.2), transparent);
+            filter: blur(30px);
+            border-radius: 50%;
+            animation: float 10s ease-in-out infinite;
+        }
+        .wp-aurora::after {
+            content: '';
+            position: absolute;
+            top: 40%;
+            left: 10%;
+            width: 80%;
+            height: 30%;
+            background: radial-gradient(ellipse, rgba(236, 72, 153, 0.3), transparent);
+            filter: blur(20px);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        .wp-gradient {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .wp-gradient::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            right: -20%;
+            width: 80%;
+            height: 70%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15), transparent);
+            border-radius: 50%;
+        }
+        .wp-gradient::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(to top, rgba(0,0,0,0.2), transparent);
+        }
+
+        /* ═══════════════════════════════════════════
+           SECTION LAYOUT
+           ═══════════════════════════════════════════ */
+        section {
+            padding: 120px 24px;
+            position: relative;
+        }
+
+        .section-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 72px;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+
+        .section-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* ═══════════════════════════════════════════
+           FEATURES SECTION
+           ═══════════════════════════════════════════ */
+        #features {
+            background: var(--gradient-bg-radial), var(--bg-primary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 36px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.3), transparent);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-card-hover);
+            transform: translateY(-4px);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: var(--gradient-accent-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 1px solid rgba(168, 85, 247, 0.15);
+        }
+
+        .feature-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--accent-1);
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -0.01em;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* ═══════════════════════════════════════════
+           STYLES SHOWCASE
+           ═══════════════════════════════════════════ */
+        .styles-section {
+            background: var(--bg-secondary);
+        }
+
+        .styles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .style-chip {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            text-align: center;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            cursor: default;
+        }
+
+        .style-chip:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-1);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        /* ═══════════════════════════════════════════
+           FAQ / SUPPORT SECTION
+           ═══════════════════════════════════════════ */
+        #support {
+            background: var(--gradient-bg-radial), var(--bg-primary);
+        }
+
+        .faq-list {
+            max-width: 780px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .faq-item:hover {
+            border-color: var(--border-card-hover);
+        }
+
+        .faq-question {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 24px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            cursor: pointer;
+            font-family: var(--font);
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: left;
+            transition: var(--transition);
+        }
+
+        .faq-question:hover {
+            color: var(--accent-1);
+        }
+
+        .faq-chevron {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            color: var(--text-tertiary);
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.open .faq-chevron {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 400px;
+        }
+
+        .faq-answer-inner {
+            padding: 0 28px 24px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        /* ═══════════════════════════════════════════
+           PRIVACY POLICY SECTION
+           ═══════════════════════════════════════════ */
+        #privacy {
+            background: var(--bg-secondary);
+        }
+
+        .privacy-content {
+            max-width: 780px;
+            margin: 0 auto;
+        }
+
+        .privacy-block {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 36px;
+            margin-bottom: 16px;
+            transition: var(--transition);
+        }
+
+        .privacy-block:hover {
+            border-color: var(--border-card-hover);
+        }
+
+        .privacy-block h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            letter-spacing: -0.01em;
+        }
+
+        .privacy-block p,
+        .privacy-block li {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .privacy-block ul {
+            list-style: none;
+            margin-top: 12px;
+        }
+
+        .privacy-block ul li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 8px;
+        }
+
+        .privacy-block ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-1);
+        }
+
+        .privacy-effective {
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+            margin-top: 32px;
+        }
+
+        /* ═══════════════════════════════════════════
+           CONTACT SECTION
+           ═══════════════════════════════════════════ */
+        #contact {
+            background: var(--bg-primary);
+            position: relative;
+        }
+
+        #contact::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .contact-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 48px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.4), rgba(236, 72, 153, 0.4), transparent);
+        }
+
+        .contact-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            background: var(--gradient-accent-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            border: 1px solid rgba(168, 85, 247, 0.15);
+        }
+
+        .contact-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--accent-1);
+        }
+
+        .contact-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .contact-card p {
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .contact-email {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            background: var(--gradient-accent-soft);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 14px;
+            color: var(--accent-1);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .contact-email:hover {
+            background: rgba(168, 85, 247, 0.15);
+            border-color: rgba(168, 85, 247, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .contact-email svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ═══════════════════════════════════════════
+           FOOTER
+           ═══════════════════════════════════════════ */
+        footer {
+            padding: 40px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background: var(--bg-primary);
+        }
+
+        .footer-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-brand {
+            font-weight: 700;
+            font-size: 1.1rem;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-text {
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-tertiary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 72px;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background: rgba(6, 6, 14, 0.95);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                padding: 16px 24px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .nav-links.open {
+                display: flex;
+            }
+
+            .nav-menu-btn {
+                display: block;
+            }
+
+            .hero {
+                padding: 100px 20px 60px;
+            }
+
+            .hero-visual {
+                gap: 10px;
+            }
+
+            .hero-mockup {
+                width: 110px;
+                height: 220px;
+                border-radius: 20px;
+            }
+
+            section {
+                padding: 80px 20px;
+            }
+
+            .section-header {
+                margin-bottom: 48px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .styles-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .contact-card {
+                padding: 32px 24px;
+            }
+
+            .privacy-block {
+                padding: 24px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-cta-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .styles-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .style-chip {
+                padding: 12px 14px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* ═══════════════════════════════════════════
+           DIVIDER
+           ═══════════════════════════════════════════ */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.15), transparent);
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     NAVIGATION
+     ═══════════════════════════════════════════ -->
+<nav id="navbar">
+    <div class="nav-inner">
+        <a href="#" class="nav-logo">Canwasa</a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#support">Support</a></li>
+            <li><a href="#privacy">Privacy</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="nav-menu-btn" id="menuBtn" aria-label="Toggle menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
+    </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     HERO SECTION
+     ═══════════════════════════════════════════ -->
+<section class="hero" id="hero">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+
+    <div class="hero-content">
+        <div class="hero-badge">
+            <span class="hero-badge-dot"></span>
+            Available on iOS &amp; Android
+        </div>
+
+        <h1>Stunning Wallpapers,<br><span>Generated Instantly</span></h1>
+
+        <p class="hero-subtitle">
+            Create unique 4K abstract wallpapers with a single tap. Everything is generated on your device &mdash; no cloud, no uploads, no tracking.
+        </p>
+
+        <div class="hero-cta-group">
+            <a href="#features" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Explore Features
+            </a>
+            <a href="#support" class="btn btn-secondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Get Support
+            </a>
+        </div>
+
+        <div class="hero-visual">
+            <div class="hero-mockup">
+                <div class="mock-wallpaper wp-geometric"></div>
+            </div>
+            <div class="hero-mockup">
+                <div class="mock-wallpaper wp-aurora"></div>
+            </div>
+            <div class="hero-mockup">
+                <div class="mock-wallpaper wp-gradient"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FEATURES SECTION
+     ═══════════════════════════════════════════ -->
+<section id="features">
+    <div class="section-inner">
+        <div class="section-header animate-on-scroll">
+            <span class="section-label">Features</span>
+            <h2 class="section-title">Everything you need,<br>nothing you don't</h2>
+            <p class="section-desc">
+                Canwasa focuses on one thing and does it beautifully &mdash; generating premium abstract wallpapers, right on your device.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </div>
+                <h3>4K Resolution</h3>
+                <p>Every wallpaper is generated in stunning 4K quality, ensuring crisp visuals on any screen size or resolution.</p>
+            </div>
+
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <h3>100% On-Device</h3>
+                <p>All generation happens locally on your phone. No cloud processing, no uploads, no servers. Your device does everything.</p>
+            </div>
+
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                </div>
+                <h3>13+ Styles</h3>
+                <p>From Geometric Abstract to Aurora Glow, AMOLED designs to Marble &amp; Ink &mdash; discover a style for every mood.</p>
+            </div>
+
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <h3>Zero Data Collection</h3>
+                <p>No accounts, no sign-ups, no personal data collected. We believe your wallpaper choices are nobody's business but yours.</p>
+            </div>
+
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </div>
+                <h3>Save &amp; Export</h3>
+                <p>Save your favorite creations and export them in full 4K resolution, ready to set as your wallpaper or share.</p>
+            </div>
+
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="19" cy="17" r="2"/><circle cx="6" cy="18" r="3"/><path d="M13.5 9a6.5 6.5 0 0 0-5 10.13"/><path d="M13.5 9a6.5 6.5 0 0 1 4.48 7.5"/></svg>
+                </div>
+                <h3>Curated Palettes</h3>
+                <p>Hand-picked color combinations that look incredible. Every palette is designed to produce visually harmonious results.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     WALLPAPER STYLES
+     ═══════════════════════════════════════════ -->
+<section class="styles-section">
+    <div class="section-inner">
+        <div class="section-header animate-on-scroll">
+            <span class="section-label">Wallpaper Styles</span>
+            <h2 class="section-title">13+ unique styles to explore</h2>
+            <p class="section-desc">Each style produces completely unique results every time you generate.</p>
+        </div>
+
+        <div class="styles-grid animate-on-scroll">
+            <div class="style-chip">Geometric Abstract</div>
+            <div class="style-chip">Minimal Geometric</div>
+            <div class="style-chip">Gradients</div>
+            <div class="style-chip">Liquid Gradients</div>
+            <div class="style-chip">Flowing Shapes</div>
+            <div class="style-chip">Mesh Background</div>
+            <div class="style-chip">Color Mist</div>
+            <div class="style-chip">Flowing Mesh</div>
+            <div class="style-chip">Aurora Glow</div>
+            <div class="style-chip">Line Art</div>
+            <div class="style-chip">Color Fields</div>
+            <div class="style-chip">AMOLED Abstract</div>
+            <div class="style-chip">Marble &amp; Ink</div>
+            <div class="style-chip">Noise Patterns</div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SUPPORT / FAQ SECTION
+     ═══════════════════════════════════════════ -->
+<section id="support">
+    <div class="section-inner">
+        <div class="section-header animate-on-scroll">
+            <span class="section-label">Support</span>
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-desc">Quick answers to the most common questions about Canwasa.</p>
+        </div>
+
+        <div class="faq-list">
+            <div class="faq-item animate-on-scroll">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Is Canwasa free to use?
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Yes! Canwasa is completely free to download and use. The app is supported by non-intrusive ads served through Google AdMob. All wallpaper generation features are available to every user at no cost.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item animate-on-scroll">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Do I need an internet connection?
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Wallpaper generation works entirely offline since everything happens on your device. An internet connection is only needed for displaying ads. You can generate and save wallpapers without any network connectivity.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item animate-on-scroll">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Does Canwasa collect my personal data?
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        No. Canwasa does not collect any personal information whatsoever. There are no user accounts, no sign-ups, no tracking, and no analytics. The only third-party service used is Google AdMob for ads, which may collect device identifiers for ad serving purposes. Please see our Privacy Policy below for full details.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item animate-on-scroll">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    What resolution are the wallpapers?
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        All wallpapers are generated in full 4K resolution, ensuring they look sharp and detailed on any device, whether you're using a standard smartphone display or a high-resolution tablet.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item animate-on-scroll">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Are the wallpapers unique?
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Absolutely. Every wallpaper is procedurally generated with randomized parameters, meaning each creation is one-of-a-kind. Even using the same style and color palette, you will get a different result every time.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item animate-on-scroll">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Can I save my favorite wallpapers?
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Yes! You can save any generated wallpaper to your favorites within the app and export them in full 4K resolution to your device's photo library at any time.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item animate-on-scroll">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Which devices are supported?
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Canwasa is available on both iOS and Android. It works on iPhones, iPads, and Android smartphones and tablets.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item animate-on-scroll">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    How do I report a bug or request a feature?
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        We'd love to hear from you! Please send an email to <a href="mailto:playpalapps@gmail.com" style="color: var(--accent-1); text-decoration: none;">playpalapps@gmail.com</a> with details about the issue or your feature suggestion. We review every message and strive to respond promptly.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     PRIVACY POLICY SECTION
+     ═══════════════════════════════════════════ -->
+<section id="privacy">
+    <div class="section-inner">
+        <div class="section-header animate-on-scroll">
+            <span class="section-label">Legal</span>
+            <h2 class="section-title">Privacy Policy</h2>
+            <p class="section-desc">Your privacy matters. Here's exactly what Canwasa does &mdash; and doesn't do &mdash; with your data.</p>
+        </div>
+
+        <div class="privacy-content">
+            <div class="privacy-block animate-on-scroll">
+                <h3>Overview</h3>
+                <p>Canwasa ("the App") is developed and published by Playpal Apps ("we," "us," or "our"). This Privacy Policy describes how information is handled when you use our mobile application, available on iOS and Android. We are committed to protecting your privacy and being transparent about our data practices.</p>
+            </div>
+
+            <div class="privacy-block animate-on-scroll">
+                <h3>Information We Do Not Collect</h3>
+                <p>Canwasa is designed with privacy at its core. We do not collect, store, or transmit any of the following:</p>
+                <ul>
+                    <li>Personal information (name, email address, phone number)</li>
+                    <li>Photos, images, or media files from your device</li>
+                    <li>Location data or GPS coordinates</li>
+                    <li>Contacts or address book information</li>
+                    <li>Browsing history or search queries</li>
+                    <li>User accounts or login credentials (none are required)</li>
+                    <li>Usage analytics or behavioral tracking data</li>
+                </ul>
+            </div>
+
+            <div class="privacy-block animate-on-scroll">
+                <h3>On-Device Processing</h3>
+                <p>All wallpaper generation in Canwasa is performed entirely on your device. No images, designs, or generation data are uploaded to any server or cloud service. Your creations remain exclusively on your device unless you choose to export or share them yourself.</p>
+            </div>
+
+            <div class="privacy-block animate-on-scroll">
+                <h3>Third-Party Services</h3>
+                <p>Canwasa uses Google AdMob to display advertisements. AdMob may collect certain information for the purpose of serving relevant ads, including:</p>
+                <ul>
+                    <li>Device identifiers (such as advertising ID)</li>
+                    <li>General device information (device model, operating system version)</li>
+                    <li>IP address (for approximate geographic region, used for ad relevance)</li>
+                </ul>
+                <p style="margin-top: 12px;">This data is collected and processed by Google in accordance with <a href="https://policies.google.com/privacy" style="color: var(--accent-1); text-decoration: none;" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a>. We do not have access to or control over the data collected by AdMob.</p>
+            </div>
+
+            <div class="privacy-block animate-on-scroll">
+                <h3>Data Sharing</h3>
+                <p>We do not sell, trade, rent, or otherwise share any user information with third parties. The only data processing that occurs is through Google AdMob as described above, which operates under Google's own privacy policies and terms.</p>
+            </div>
+
+            <div class="privacy-block animate-on-scroll">
+                <h3>Children's Privacy</h3>
+                <p>Canwasa is not directed at children under the age of 13. We do not knowingly collect personal information from children under 13. Since the App does not collect personal information from any user, there is no risk of inadvertent collection from minors.</p>
+            </div>
+
+            <div class="privacy-block animate-on-scroll">
+                <h3>Data Security</h3>
+                <p>Because Canwasa does not collect or store personal data on any servers, there is no centralized database of user information that could be compromised. All generated content exists only on your device and is under your control.</p>
+            </div>
+
+            <div class="privacy-block animate-on-scroll">
+                <h3>Changes to This Policy</h3>
+                <p>We may update this Privacy Policy from time to time. Any changes will be reflected on this page with an updated effective date. We encourage you to review this page periodically for the latest information on our privacy practices.</p>
+            </div>
+
+            <div class="privacy-block animate-on-scroll">
+                <h3>Contact Us</h3>
+                <p>If you have any questions, concerns, or requests regarding this Privacy Policy or the App's data practices, please contact us at:</p>
+                <p style="margin-top: 12px;"><strong>Playpal Apps</strong><br>
+                Email: <a href="mailto:playpalapps@gmail.com" style="color: var(--accent-1); text-decoration: none;">playpalapps@gmail.com</a></p>
+            </div>
+
+            <p class="privacy-effective animate-on-scroll">Effective Date: March 27, 2026</p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CONTACT SECTION
+     ═══════════════════════════════════════════ -->
+<section id="contact">
+    <div class="section-inner">
+        <div class="section-header animate-on-scroll">
+            <span class="section-label">Contact</span>
+            <h2 class="section-title">Get in Touch</h2>
+            <p class="section-desc">Have a question, found a bug, or want to suggest a feature? We'd love to hear from you.</p>
+        </div>
+
+        <div class="contact-card animate-on-scroll">
+            <div class="contact-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <h3>Email Us</h3>
+            <p>We personally read every message and typically respond within 24&ndash;48 hours.</p>
+            <a href="mailto:playpalapps@gmail.com" class="contact-email">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                playpalapps@gmail.com
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════ -->
+<footer>
+    <div class="footer-inner">
+        <span class="footer-brand">Canwasa</span>
+        <span class="footer-text">&copy; 2026 Playpal Apps. All rights reserved.</span>
+        <ul class="footer-links">
+            <li><a href="#privacy">Privacy Policy</a></li>
+            <li><a href="#support">Support</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════
+     MINIMAL VANILLA JS
+     ═══════════════════════════════════════════ -->
+<script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const navLinks = document.getElementById('navLinks');
+    menuBtn.addEventListener('click', () => {
+        navLinks.classList.toggle('open');
+    });
+
+    // Close mobile menu on link click
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('open');
+        });
+    });
+
+    // FAQ accordion
+    function toggleFaq(btn) {
+        const item = btn.parentElement;
+        const wasOpen = item.classList.contains('open');
+        // Close all
+        document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+        // Toggle current
+        if (!wasOpen) item.classList.add('open');
+    }
+
+    // Scroll animations using IntersectionObserver
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -40px 0px'
+    });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
