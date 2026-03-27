@@ -398,9 +398,9 @@
 
         /* ═══ 3 Stunning Abstract Wallpapers ═══ */
 
-        /* 1. Supernova — explosive warm eruption from deep black */
+        /* 1. Neon Geometry — magenta/blue geometric shapes on deep black */
         .wp-fire {
-            background: #020000;
+            background: linear-gradient(160deg, #0a0020 0%, #050010 40%, #0a0018 100%);
             position: relative;
             overflow: hidden;
         }
@@ -409,40 +409,41 @@
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background:
-                radial-gradient(circle at 50% 50%, rgba(255, 200, 50, 0.9), rgba(255, 100, 0, 0.7) 15%, rgba(200, 0, 50, 0.5) 30%, rgba(100, 0, 80, 0.3) 45%, transparent 60%),
-                radial-gradient(circle at 35% 45%, rgba(255, 255, 100, 0.4), transparent 20%),
-                radial-gradient(circle at 65% 55%, rgba(255, 150, 0, 0.3), transparent 22%),
-                radial-gradient(ellipse at 50% 50%, rgba(255, 80, 0, 0.15), transparent 70%);
-            filter: blur(8px);
-            animation: float 7s ease-in-out infinite;
+                /* Blue glow top-left */
+                radial-gradient(circle at 15% 12%, rgba(60, 80, 255, 0.7), transparent 35%),
+                /* Large magenta triangle wash bottom-left */
+                linear-gradient(35deg, rgba(200, 0, 120, 0.7) 0%, rgba(180, 0, 100, 0.5) 25%, transparent 55%),
+                /* Pink-purple spread */
+                radial-gradient(ellipse at 30% 65%, rgba(220, 0, 160, 0.6), transparent 45%),
+                /* Big magenta circle center-right */
+                radial-gradient(circle at 72% 38%, rgba(180, 0, 100, 0.75), transparent 22%),
+                /* Bright pink circle center-bottom */
+                radial-gradient(circle at 45% 72%, rgba(255, 50, 200, 0.7), transparent 18%),
+                /* Teal accent circle bottom-right */
+                radial-gradient(circle at 85% 68%, rgba(0, 150, 160, 0.65), transparent 14%),
+                /* Purple circle at very bottom */
+                radial-gradient(circle at 50% 92%, rgba(120, 80, 220, 0.6), transparent 16%),
+                /* Violet circle bottom-right area */
+                radial-gradient(circle at 65% 88%, rgba(100, 60, 255, 0.5), transparent 14%);
+            animation: float 9s ease-in-out infinite;
         }
         .wp-fire::after {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background:
-                /* Radial rays emanating from center */
-                conic-gradient(from 0deg at 50% 50%,
-                    transparent 0deg, rgba(255,200,50,0.08) 5deg, transparent 10deg,
-                    transparent 25deg, rgba(255,120,0,0.06) 30deg, transparent 35deg,
-                    transparent 55deg, rgba(255,180,50,0.07) 60deg, transparent 65deg,
-                    transparent 85deg, rgba(200,50,0,0.05) 90deg, transparent 95deg,
-                    transparent 110deg, rgba(255,150,0,0.08) 115deg, transparent 120deg,
-                    transparent 145deg, rgba(255,200,80,0.06) 150deg, transparent 155deg,
-                    transparent 175deg, rgba(255,100,0,0.07) 180deg, transparent 185deg,
-                    transparent 210deg, rgba(255,180,0,0.05) 215deg, transparent 220deg,
-                    transparent 245deg, rgba(200,80,0,0.07) 250deg, transparent 255deg,
-                    transparent 280deg, rgba(255,160,50,0.06) 285deg, transparent 290deg,
-                    transparent 315deg, rgba(255,200,0,0.08) 320deg, transparent 325deg,
-                    transparent 345deg, rgba(255,120,0,0.05) 350deg, transparent 360deg),
-                /* Tiny hot sparks */
-                radial-gradient(1.5px 1.5px at 42% 38%, rgba(255,255,200,0.9), transparent),
-                radial-gradient(1px 1px at 56% 48%, rgba(255,255,150,0.7), transparent),
-                radial-gradient(1px 1px at 48% 56%, rgba(255,200,100,0.6), transparent),
-                radial-gradient(1.5px 1.5px at 38% 52%, rgba(255,255,200,0.5), transparent),
-                radial-gradient(1px 1px at 62% 42%, rgba(255,220,100,0.6), transparent),
-                radial-gradient(1px 1px at 30% 35%, rgba(255,150,50,0.3), transparent),
-                radial-gradient(1px 1px at 70% 60%, rgba(255,180,80,0.3), transparent);
+                /* Geometric angular shapes via sharp gradients */
+                linear-gradient(220deg, transparent 15%, rgba(150, 0, 100, 0.15) 16%, rgba(150, 0, 100, 0.15) 17%, transparent 18%),
+                linear-gradient(220deg, transparent 35%, rgba(180, 0, 120, 0.12) 36%, rgba(180, 0, 120, 0.12) 37%, transparent 38%),
+                linear-gradient(140deg, transparent 40%, rgba(100, 0, 180, 0.1) 41%, rgba(100, 0, 180, 0.1) 42%, transparent 43%),
+                linear-gradient(50deg, transparent 20%, rgba(200, 50, 150, 0.08) 21%, rgba(200, 50, 150, 0.08) 22%, transparent 23%),
+                linear-gradient(320deg, transparent 55%, rgba(180, 0, 140, 0.1) 56%, rgba(180, 0, 140, 0.1) 57%, transparent 58%),
+                /* Curved thin lines */
+                radial-gradient(ellipse at 50% 50%, transparent 38%, rgba(255, 100, 180, 0.12) 39%, transparent 40%),
+                radial-gradient(ellipse at 30% 40%, transparent 50%, rgba(200, 80, 160, 0.1) 51%, transparent 52%),
+                radial-gradient(ellipse at 70% 60%, transparent 30%, rgba(180, 60, 140, 0.08) 31%, transparent 32%),
+                /* Green tint at very bottom */
+                radial-gradient(ellipse at 40% 98%, rgba(0, 180, 80, 0.15), transparent 25%);
         }
 
         /* 2. Aurora Borealis — cinematic northern lights with star field */
